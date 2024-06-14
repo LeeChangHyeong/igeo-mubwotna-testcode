@@ -38,7 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         String url = req.getRequestURI();
 
-        if (StringUtils.hasText(url) && (url.equals("/user/signin") || url.equals("/user/signup") || url.startsWith("/swagger"))) {
+        if (StringUtils.hasText(url) && (url.equals("/api/user/signin") || url.equals("/api/user/signup") || url.startsWith("/swagger"))) {
             filterChain.doFilter(req, res);
             return; // 필터 체인을 빠져나갑니다.
         }
