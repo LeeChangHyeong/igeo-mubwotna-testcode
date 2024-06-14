@@ -1,0 +1,37 @@
+## Variables
+@userId = UserID1234
+@password = Password@@
+@name = 김예찬
+@email = email@email.com
+@description = 한줄소개
+
+### 회원가입
+POST http://localhost:10000/user/
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "password": "{{password}}",
+  "name": "{{name}}",
+  "email": "{{email}}",
+  "description": "{{description}}"
+}
+
+### 로그인
+POST http://localhost:10000/user/login
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("auth_token", response.body.accessToken); %}
+
+### 레시피 좋아요 등록
+GET http://localhost:10000/like/recipe/1
+Authorization: Bearer {{auth_token}}
+
+### 레시피 좋아요 삭제
+DELETE http://localhost:10000/like/recipe/1
+Authorization: Bearer {{auth_token}}
