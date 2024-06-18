@@ -8,11 +8,10 @@ import com.sparta.igeomubwotna.dto.CommentResponseDto;
 import com.sparta.igeomubwotna.entity.User;
 import com.sparta.igeomubwotna.security.UserDetailsImpl;
 import com.sparta.igeomubwotna.service.CommentService;
-import com.sparta.igeomubwotna.service.RecipeService;
-import com.sparta.igeomubwotna.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,13 +30,15 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.*;
-        import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-        import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -67,6 +68,7 @@ public class CommentMvcTest {
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity(new MockSpringSecurityFilter())) //기존 security filter 취소했으니 새로 만들어준 필터 넣어줌
                 .build();
+        Locale.setDefault(Locale.KOREAN); // 언어를 한국어로 설정
     }
 
     private User mockUserSetup() {
@@ -89,8 +91,9 @@ public class CommentMvcTest {
     void test1() throws Exception {
         //given
         User user = mockUserSetup();
-        CommentRequestDto commentRequestDto = new CommentRequestDto("안녕하세요");
-        given(commentService.createComment(any(CommentRequestDto.class), anyLong(), eq(user))).willReturn(ResponseEntity.status(HttpStatus.OK).body("comment가 등록되었습니다."));
+        CommentRequestDto commentRequestDto = Mockito.mock(CommentRequestDto.class);
+        when(commentRequestDto.getContent()).thenReturn("안녕");
+        given(commentService.createComment(any(commentRequestDto.getClass()), anyLong(), eq(user))).willReturn(ResponseEntity.status(HttpStatus.OK).body("comment가 등록되었습니다."));
 
         String postInfo = objectMapper.writeValueAsString(commentRequestDto);
 
@@ -134,7 +137,13 @@ public class CommentMvcTest {
         // given
         User user = mockUserSetup();
         Long recipeId = 1L;
-        CommentResponseDto commentResponseDto = new CommentResponseDto(1L, "안녕", user.getUserId(), LocalDateTime.now(), Long.valueOf(1L));
+        CommentResponseDto commentResponseDto = Mockito.mock(CommentResponseDto.class);
+
+        when(commentResponseDto.getId()).thenReturn(1L);
+        when(commentResponseDto.getContent()).thenReturn("안녕");
+        when(commentResponseDto.getUserId()).thenReturn(user.getUserId());
+        when(commentResponseDto.getCreatedAt()).thenReturn(LocalDateTime.now());
+        when(commentResponseDto.getLikeCount()).thenReturn(1L);
 
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         commentResponseDtoList.add(commentResponseDto);
@@ -164,8 +173,8 @@ public class CommentMvcTest {
         Long recipeId = 1L;
         Long commentId = 1L;
 
-        CommentRequestDto commentRequestDto = new CommentRequestDto("수정");
-
+        CommentRequestDto commentRequestDto = Mockito.mock(CommentRequestDto.class);
+        when(commentRequestDto.getContent()).thenReturn("수정");
         given(commentService.updateComment(eq(recipeId), eq(commentId), any(CommentRequestDto.class), eq(user))).willReturn(ResponseEntity.status(HttpStatus.OK).body("comment가 수정되었습니다."));
 
         String patchInfo = objectMapper.writeValueAsString(commentRequestDto);

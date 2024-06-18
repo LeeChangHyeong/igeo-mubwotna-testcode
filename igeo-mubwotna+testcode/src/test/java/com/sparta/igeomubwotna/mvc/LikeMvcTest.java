@@ -1,17 +1,13 @@
 package com.sparta.igeomubwotna.mvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.igeomubwotna.config.SecurityConfig;
 import com.sparta.igeomubwotna.controller.LikeController;
 import com.sparta.igeomubwotna.entity.User;
 import com.sparta.igeomubwotna.security.UserDetailsImpl;
 import com.sparta.igeomubwotna.service.LikeService;
-import com.sparta.igeomubwotna.service.RecipeService;
-import com.sparta.igeomubwotna.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,11 +19,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.security.Principal;
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,8 +51,6 @@ public class LikeMvcTest {
     private Principal mockPrincipal;
     @Autowired
     private WebApplicationContext context;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockBean
     LikeService likeService;
 
@@ -65,6 +59,8 @@ public class LikeMvcTest {
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity(new MockSpringSecurityFilter()))
                 .build();
+
+        Locale.setDefault(Locale.KOREAN); // 언어를 한국어로 설정
     }
 
     private User mockUserSetup() {
@@ -91,9 +87,9 @@ public class LikeMvcTest {
 
         // when - then
         mvc.perform(post("/api/recipe/{recipeId}/like", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .principal(mockPrincipal)
-        )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .principal(mockPrincipal)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().string("좋아요 성공!"))
                 .andDo(print());
