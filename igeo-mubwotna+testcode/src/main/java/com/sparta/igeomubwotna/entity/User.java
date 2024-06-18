@@ -91,4 +91,7 @@ public class User extends Timestamped {
         this.statusModifiedAt = LocalDateTime.now();
     }
 
+    public void setId(long l) {
+        this.id = l;
+    }
 }
