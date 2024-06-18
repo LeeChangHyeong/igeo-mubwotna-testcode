@@ -3,10 +3,8 @@ package com.sparta.igeomubwotna.mvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.igeomubwotna.config.SecurityConfig;
 import com.sparta.igeomubwotna.controller.CommentController;
-import com.sparta.igeomubwotna.controller.RecipeController;
 import com.sparta.igeomubwotna.dto.CommentRequestDto;
 import com.sparta.igeomubwotna.dto.CommentResponseDto;
-import com.sparta.igeomubwotna.entity.Comment;
 import com.sparta.igeomubwotna.entity.User;
 import com.sparta.igeomubwotna.security.UserDetailsImpl;
 import com.sparta.igeomubwotna.service.CommentService;
@@ -43,7 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
-        controllers = {RecipeController.class, CommentController.class},
+        controllers = {CommentController.class},
         excludeFilters = {
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
@@ -53,17 +51,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 
 @MockBean(JpaMetamodelMappingContext.class)
-public class RecipeCommentMvcTest {
+public class CommentMvcTest {
     private MockMvc mvc; // MockMvc 객체 선언
     private Principal mockPrincipal; // 인증된 사용자 정보를 담을 Principal 객체
     @Autowired
     private WebApplicationContext context; // Spring의 WebApplicationContext 객체
     @Autowired
     private ObjectMapper objectMapper; // JSON 처리를 위한 ObjectMapper 객체
-    @MockBean
-    UserService userService;
-    @MockBean
-    RecipeService recipeService;
     @MockBean
     CommentService commentService;
 
